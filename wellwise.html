@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDWN Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            color: #2f74e2;
+            text-align: center;
+            font-size: 26;
+            font-weight: bold;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        select,
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #497fd5;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #497fd5;
+        }
+        #output {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .result-box {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        p {
+            margin-bottom: 8px;
+            color: #333;
+        }
+        strong {
+            color: #497fd5;
+        }
+    </style>
+</head>
+<body>
+
+<h2>TDWN Calculator</h2>
+
+<form id="userForm">
+    <label for="gender">Gender:</label>
+    <select id="gender" name="gender" required>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+    </select>
+
+    <label for="height">Height (in cm):</label>
+    <input type="number" id="height" name="height" required>
+
+    <label for="weight">Weight (in kg):</label>
+    <input type="number" id="weight" name="weight" required>
+
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age" required>
+
+    <label for="temperature">Temperature (in °C):</label>
+    <input type="number" id="temperature" name="temperature" required>
+
+    <button type="button" onclick="calculateTDWN()">Calculate TDWN</button>
+</form>
+
+<div id="output"></div>
+
+<script>
+    var calculationCounter = 1;
+
+    function calculateTDWN() {
+        // Get form values
+        var gender = document.getElementById("gender").value;
+        var height = parseFloat(document.getElementById("height").value);
+        var weight = parseFloat(document.getElementById("weight").value);
+        var age = parseInt(document.getElementById("age").value);
+        var temperature = parseFloat(document.getElementById("temperature").value);
+
+        // Calculate BMR
+        var bmr = (gender === "male") ?
+            88.362 + (15.397 * weight) + (6.799 * height) - (5.677 * age) :
+            447.593 + (11.247 * weight) + (5.098 * height) - (4.330 * age);
+
+        // Generate random physical activity factor between 1.0 and 1.9
+        var physicalActivityFactor = Math.random() * (1.9 - 1.0) + 1.0;
+
+        // Determine temperature factor based on different ranges
+        var temperatureFactor;
+        if (temperature <=23) {
+            temperatureFactor = 7;
+        } else if (temperature >=26 ) {
+            temperatureFactor = 10;
+        } 
+        else if (temperature >=29 ) {
+            temperatureFactor = 13;
+        }
+        else if (temperature >=32 ) {
+            temperatureFactor = 17;
+        }  else {
+            temperatureFactor = 20;
+        }
+
+        // Calculate TDWN
+        var tdwn = (bmr * physicalActivityFactor) + (temperature * temperatureFactor);
+
+        // Calculate TDWN in liters
+        var tdwnLiters = tdwn / 1000;
+
+        // Display the result
+        var outputElement = document.getElementById("output");
+
+        // Create a new result element for each calculation
+        var resultElement = document.createElement("div");
+        resultElement.className = "result-box";
+        resultElement.innerHTML = "<p1>User " + calculationCounter + "</p1>" +
+                                  "<p><strong>Basal Metabolic Rate (BMR):</strong> " + bmr.toFixed(2) + "</p>" +
+                                  "<p><strong>Physical Activity Factor:</strong> " + physicalActivityFactor.toFixed(2) + "</p>" +
+                                  "<p><strong>Temperature Factor:</strong> " + temperatureFactor.toFixed(2) + "</p>" +
+                                  "<p><strong>Total Daily Water Needs (TDWN) in Ounces:</strong> " + tdwn.toFixed(2) + " ounces</p>" +
+                                  "<p><strong>Total Daily Water Needs (TDWN) in Liters:</strong> " + tdwnLiters.toFixed(2) + " liters</p>";
+
+        // Increment the calculation counter
+        calculationCounter++;
+
+        // Append the result element to the output container
+        outputElement.appendChild(resultElement);
+
+        // Clear form inputs for the next calculation
+        document.getElementById("gender").value = "male";
+        document.getElementById("height").value = "";
+        document.getElementById("weight").value = "";
+        document.getElementById("age").value = "";
+        document.getElementById("temperature").value = "";
+    }
+</script>
+
+</body>
+</html>
